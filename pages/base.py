@@ -12,21 +12,20 @@ class Base_Page:
         return time.sleep(seconds)
 
     def click(self, locator: tuple) -> None:
-        self.wait.until(EC.element_to_be_clickable(locator=locator)).click()
+        self.wait.until(EC.element_to_be_clickable(*locator)).click()
 
     def get_text(self, locator: tuple) -> str:
-        return self.wait.until(EC.visibility_of_element_located(locator=locator)).text
+        return self.wait.until(EC.visibility_of_element_located(*locator)).text
 
     def send_keys(self, locator: tuple, text: str) -> None:
-        return self.wait.until(
-            EC.visibility_of_element_located(locator=locator)
-        ).send_keys(text)
+        return self.wait.until(EC.visibility_of_element_located(*locator)).send_keys(
+            text
+        )
 
     def element_displayed(self, locator: tuple, tries: int = 5) -> bool:
         for _ in range(tries):
             try:
-                element = self.driver.find_element(locator)
-                if element.is_displayed():
+                if self.driver.find_element(*locator).is_displayed():
                     print(f"Element displayed: True")
                     return True
             except:

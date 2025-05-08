@@ -7,7 +7,7 @@ class Navigator(Base_Page):
     def __init__(self, driver):
         super().__init__(driver=driver)
         self.driver = driver
-        self.logo_by = (By.xpath, "//a[@id='logo']")
+        self.logo_by = (By.XPATH, "//a[@id='logo']")
 
     def go_to(self, url):
         self.driver.get(url)
