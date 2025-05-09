@@ -15,7 +15,7 @@ try:
     website = navigator.go_to(url)
     (
         website.close_cookies_if_present()
-        .search_for_gpu("Nvidia rtx 5070 ti")
+        .search_for_gpu("Nvidia rtx 5060 ti")
         .select_gpu_only_checkbox()
         .get_all_gpus_and_make_csv()
     )

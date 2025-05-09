@@ -37,3 +37,16 @@ class Base_Page:
         WebDriverWait(self.driver, self.wait_time).until(
             lambda d: d.execute_script("return document.readyState") == "complete"
         )
+
+    def wait_until_element_displayed(self, locator: tuple, tries: int) -> None:
+        for _ in range(tries):
+            try:
+                if self.driver.find_element(locator):
+                    print("Element displayed, stop counter")
+                    return
+                else:
+                    print("Element not displayed yet, wait")
+                    self.sleep(1)
+            except Exception as e:
+                print("Element not displayed yet, wait")
+                self.sleep(1)

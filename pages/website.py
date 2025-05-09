@@ -2,6 +2,7 @@ from pages.base import Base_Page
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import csv
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class Website(Base_Page):
@@ -56,6 +57,7 @@ class Website(Base_Page):
             self.click(self.gpu_only_label_by)
             self.wait_for_spinner(tries=10)
             self.wait_for_page_load()
+            self.wait_until_element_displayed(self.all_gpus_found_by, 10)
         return self
 
     def wait_for_spinner(self, tries: int) -> None:
@@ -63,7 +65,7 @@ class Website(Base_Page):
         print("Check for spinner")
         for _ in range(tries):
             try:
-                if self.find_element(*self.spinner_by).is_displayed():
+                if self.find_element(self.spinner_by).is_displayed():
                     print("Spinner present, wait")
                     self.sleep(1)
                 else:
@@ -76,6 +78,7 @@ class Website(Base_Page):
     def get_all_gpus_and_make_csv(self):
         self.wait_for_page_load()
         self.wait_for_spinner(tries=10)
+        self.wait.until(EC.visibility_of_element_located(self.all_gpus_found_by))
         gpu_cards = self.driver.find_elements(*self.all_gpus_found_by)
         if len(gpu_cards) == 0:
             raise Exception("GPU list is empty, check")
