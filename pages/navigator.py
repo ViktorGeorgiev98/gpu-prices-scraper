@@ -15,4 +15,4 @@ class Navigator(Base_Page):
             print("Website is opened")
         else:
             raise Exception("Website could not be reached")
-        return Website
+        return Website(self.driver)

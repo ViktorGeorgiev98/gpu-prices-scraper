@@ -24,10 +24,10 @@ class Website(Base_Page):
 
     def close_cookies_if_present(self) -> None:
         self.wait_for_page_load()
-        if self.element_displayed(*self.cookies_header_by):
+        if self.element_displayed(self.cookies_header_by, 5):
             print("Cookies displayed, let us close them")
             self.sleep(1)
-            self.click(*self.close_cookies_button_by)
+            self.click(self.close_cookies_button_by)
             print("Closed cookies")
         else:
             print("No need to close cookies")
@@ -37,22 +37,23 @@ class Website(Base_Page):
         self.wait_for_page_load()
         print("Write gpu name in dashboard search field")
         self.send_keys(
-            *self.dashboard_search_field_by, gpu_name + Keys.RETURN
+            self.dashboard_search_field_by, gpu_name + Keys.RETURN
         )  # click enter
         self.wait_for_page_load()
-        if self.element_displayed(*self.no_results_by):
+        if self.element_displayed(self.no_results_by):
             raise Exception(f"No results found for the search param: {gpu_name}")
         print(f"Searched for {gpu_name}")
         return self
 
     def select_gpu_only_checkbox(self) -> None:
         self.wait_for_page_load()
+        self.close_cookies_if_present()
         print("We need to select only gpu option from filters")
-        if self.find_element(*self.gpu_only_checkbox_by).is_selected():
+        if self.driver.find_element(*self.gpu_only_checkbox_by).is_selected():
             print("Checkbox for gpu only is already selected")
         else:
             print("Enable gpu only checkbox")
-            self.click(*self.gpu_only_label_by)
+            self.click(self.gpu_only_label_by)
             self.wait_for_spinner(tries=10)
             self.wait_for_page_load()
         return self
@@ -70,19 +71,21 @@ class Website(Base_Page):
                     return
             except Exception as e:
                 print("Spinner xpath might be wrong, or spinner is not displayed")
+                return
 
     def get_all_gpus_and_make_csv(self):
         self.wait_for_page_load()
         self.wait_for_spinner(tries=10)
-        gpu_cards = self.find_elements(*self.all_gpus_found_by)
+        gpu_cards = self.driver.find_elements(*self.all_gpus_found_by)
         if len(gpu_cards) == 0:
             raise Exception("GPU list is empty, check")
         gpus = []
         for card in gpu_cards:
             try:
-                gpu_name = card.find_element(By.XPATH, "//h2[@itemprop='name']").text
+                gpu_name = card.find_element(By.XPATH, ".//h2[@itemprop='name']").text
                 gpu_price = card.find_element(
-                    By.XPATH, "//div[@class='price-container']//span[@itemprop='price']"
+                    By.XPATH,
+                    ".//div[@class='price-container']//span[@itemprop='price']",
                 ).text
                 gpus.append({"Name": gpu_name, "Price": gpu_price})
             except Exception as e:
