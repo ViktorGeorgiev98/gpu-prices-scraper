@@ -33,3 +33,8 @@ class Base_Page:
             self.sleep(1)
         print(f"Element displayed: False")
         return False
+
+    def wait_for_page_load(self):
+        WebDriverWait(self.driver, self.wait).until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
